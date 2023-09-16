@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { weatherStore } from '$lib/stores/weather-store';
+	import Axis from './Axis.svelte';
 	// @ts-ignore
 	import * as d3 from 'd3';
 
@@ -35,19 +36,16 @@
 
 	export let width = 640;
 	export let height = 400;
-	export let marginTop = 20;
-	export let marginRight = 20;
-	export let marginBottom = 20;
-	export let marginLeft = 20;
+	export let margin = 30;
 
 	$: x = d3.scaleTime(
 		d3.extent(data, (d: WeatherPoint) => d.time),
-		[marginLeft, width - marginRight]
+		[margin, width - margin]
 	);
-	$: y = d3.scaleLinear(
-		d3.extent(data, (d: WeatherPoint) => d.temp),
-		[marginTop, height - marginBottom]
-	);
+	$: y = d3.scaleLinear(d3.extent(data, (d: WeatherPoint) => d.temp).reverse(), [
+		margin,
+		height - margin
+	]);
 	$: line = d3
 		.line()
 		.curve(d3.curveLinear)
@@ -58,6 +56,9 @@
 <svg {width} {height}>
 	<path fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} />
 	<g fill="white" stroke="currentColor" stroke-width="1.5">
+		<Axis {width} {height} {margin} scale={x} position="bottom" />
+		<Axis {width} {height} {margin} scale={y} position="left" />
+		<text>Bottom</text>
 		{#each data as d, i}
 			<circle cx={x(d.time)} cy={y(d.temp)} r="1" />
 		{/each}

@@ -19,7 +19,7 @@
 	<title>Nostr Weather</title>
 </svelte:head>
 
-<div>
+<div class="margin:40px">
 	<h1>Nostr Weather Report</h1>
 	<button class="bg-slate-200 hover:bg-slate-300" on:click={() => (showRelays = !showRelays)}
 		>Click for relays</button
