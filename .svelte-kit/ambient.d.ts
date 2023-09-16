@@ -98,6 +98,7 @@ declare module '$env/static/private' {
 	export const PYENV_SHELL: string;
 	export const npm_package_type: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
+	export const npm_package_dependencies_d3: string;
 	export const LOGNAME: string;
 	export const npm_package_scripts_format: string;
 	export const npm_lifecycle_script: string;
@@ -211,6 +212,7 @@ declare module '$env/dynamic/private' {
 		PYENV_SHELL: string;
 		npm_package_type: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
+		npm_package_dependencies_d3: string;
 		LOGNAME: string;
 		npm_package_scripts_format: string;
 		npm_lifecycle_script: string;
