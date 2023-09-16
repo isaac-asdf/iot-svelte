@@ -38,12 +38,10 @@
 	export let height = 400;
 	export let margin = 30;
 
-	$: x = d3.scaleTime(
-		d3.extent(data, (d: WeatherPoint) => d.time),
-		[margin, width - margin]
-	);
+	$: timeExtent = d3.extent(data, (d: WeatherPoint) => d.time);
+	$: x = d3.scaleTime(timeExtent, [margin, width - margin]);
 	$: y = d3.scaleLinear(d3.extent(data, (d: WeatherPoint) => d.temp).reverse(), [
-		margin,
+		margin * 2,
 		height - margin
 	]);
 	$: line = d3
@@ -55,10 +53,15 @@
 
 <svg {width} {height}>
 	<path fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} />
-	<g fill="white" stroke="currentColor" stroke-width="1.5">
-		<Axis {width} {height} {margin} scale={x} position="bottom" />
-		<Axis {width} {height} {margin} scale={y} position="left" />
-		<text>Bottom</text>
+	<Axis {width} {height} {margin} scale={x} position="bottom" />
+	<Axis {width} {height} {margin} scale={y} position="left" />
+	<text y={height} x={width / 2}>Time</text>
+	{#if data.length > 0}
+		<text y={margin} x={margin / 2}
+			>Temperature in &degF from {timeExtent[0].toLocaleDateString()} to {timeExtent[1].toLocaleDateString()}</text
+		>
+	{/if}
+	<g fill="white" stroke="currentColor" stroke-width="1">
 		{#each data as d, i}
 			<circle cx={x(d.time)} cy={y(d.temp)} r="1" />
 		{/each}
