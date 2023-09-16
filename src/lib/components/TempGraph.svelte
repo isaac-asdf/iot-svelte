@@ -2,24 +2,30 @@
 	import { weatherStore } from '$lib/stores/weather-store';
 	// @ts-ignore
 	import * as d3 from 'd3';
-	import { fly } from 'svelte/transition';
 
 	type WeatherPoint = { temp: number; time: Date };
 
-	let data: WeatherPoint[] = [
-		{ temp: 56, time: new Date('2023-01-21') },
-		{ temp: 58, time: new Date('2023-02-22') },
-		{ temp: 61, time: new Date('2023-03-23') },
-		{ temp: 55, time: new Date('2023-04-24') },
-		{ temp: 40, time: new Date('2023-05-25') }
-	];
+	let data: WeatherPoint[] = [];
+	// const yesterday = new Date(2023, 8, 15);
+	// for (let i = 0; i < 100; i++) {
+	// 	const hours = Math.floor(i / 10) + 1;
+	// 	const minutes = (i % 10) * 6;
+	// 	let time = new Date();
+	// 	Object.assign(time, yesterday);
+	// 	time.setHours(hours);
+	// 	time.setMinutes(minutes);
+	// 	data.push({
+	// 		temp: Math.sin(i) * 50 + 50,
+	// 		time
+	// 	});
+	// }
 
-	// $weatherStore.forEach((event) => {
-	// 	const time = new Date(event.created_at! * 1000).getMinutes();
-	// 	const temp = parseFloat(event.content);
-	// 	// const temp = celsiusToF(parseFloat(event.content));
-	// 	data.push({ temp, time });
-	// });
+	$weatherStore.forEach((event) => {
+		const time = new Date(event.created_at! * 1000);
+		const celsius = parseFloat(event.content);
+		const temp = celsiusToF(celsius);
+		data.push({ temp, time });
+	});
 
 	let ctx;
 
@@ -35,23 +41,25 @@
 	export let marginLeft = 20;
 
 	$: x = d3.scaleTime(
-		[d3.extent(data, (d: WeatherPoint) => d.time)],
+		d3.extent(data, (d: WeatherPoint) => d.time),
 		[marginLeft, width - marginRight]
 	);
 	$: y = d3.scaleLinear(
-		[d3.extent(data, (d: WeatherPoint) => d.temp)],
-		[height - marginBottom, marginTop]
+		d3.extent(data, (d: WeatherPoint) => d.temp),
+		[marginTop, height - marginBottom]
 	);
 	$: line = d3
 		.line()
-		.curve(d3.curveNatural)
-		.x((d: WeatherPoint) => d.time)
-		.y((d: WeatherPoint) => d.temp);
+		.curve(d3.curveLinear)
+		.x((d: WeatherPoint) => x(d.time))
+		.y((d: WeatherPoint) => y(d.temp));
 </script>
 
-<svg {width} {height} class="bg-slate-200">
-	<path fill="none" stroke="black" stroke-width="1.5" d={line(data)} />
-	{#each data as d, i}
-		<circle cx={d.time.getUTCDate()} cy={d.temp} r="3" in:fly={{ duration: 5000, delay: i * 15 }} />
-	{/each}
+<svg {width} {height}>
+	<path fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} />
+	<g fill="white" stroke="currentColor" stroke-width="1.5">
+		{#each data as d, i}
+			<circle cx={x(d.time)} cy={y(d.temp)} r="1" />
+		{/each}
+	</g>
 </svg>
