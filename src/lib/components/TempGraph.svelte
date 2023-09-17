@@ -7,19 +7,6 @@
 	type WeatherPoint = { temp: number; time: Date };
 
 	let data: WeatherPoint[] = [];
-	// const yesterday = new Date(2023, 8, 15);
-	// for (let i = 0; i < 100; i++) {
-	// 	const hours = Math.floor(i / 10) + 1;
-	// 	const minutes = (i % 10) * 6;
-	// 	let time = new Date();
-	// 	Object.assign(time, yesterday);
-	// 	time.setHours(hours);
-	// 	time.setMinutes(minutes);
-	// 	data.push({
-	// 		temp: Math.sin(i) * 50 + 50,
-	// 		time
-	// 	});
-	// }
 
 	$weatherStore.forEach((event) => {
 		const time = new Date(event.created_at! * 1000);
@@ -38,7 +25,25 @@
 	export let height = 400;
 	export let margin = 30;
 
+	let minTime: Date | null = null;
+	let maxTime: Date | null = null;
+
+	let inputTimeChange = () => {
+		if (minTime && maxTime) {
+			if (minTime > maxTime) {
+				const temp = minTime;
+				minTime = maxTime;
+				maxTime = temp;
+			}
+		}
+	};
+
 	$: timeExtent = d3.extent(data, (d: WeatherPoint) => d.time);
+	if (minTime && maxTime) {
+		console.log('time changed');
+		timeExtent[0] = minTime;
+		timeExtent[1] = maxTime;
+	}
 	$: x = d3.scaleTime(timeExtent, [margin, width - margin]);
 	$: y = d3.scaleLinear(d3.extent(data, (d: WeatherPoint) => d.temp).reverse(), [
 		margin * 2,
@@ -51,6 +56,27 @@
 		.y((d: WeatherPoint) => y(d.temp));
 </script>
 
+<div class="border-b-2 hover:border-2 max-w-max">
+	<label for="minDate">Min. Date:</label>
+	<input
+		class="text-slate-400"
+		id="minDate"
+		type="datetime-local"
+		bind:value={minTime}
+		on:change={inputTimeChange}
+	/>
+</div>
+<div class="border-b-2 hover:border-2 max-w-max">
+	<label for="maxDate">Max Date:</label>
+	<input
+		class="text-slate-400"
+		id="maxDate"
+		type="datetime-local"
+		bind:value={maxTime}
+		on:change={inputTimeChange}
+	/>
+</div>
+
 <svg {width} {height}>
 	<path fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} />
 	<Axis {width} {height} {margin} scale={x} position="bottom" />
@@ -61,7 +87,7 @@
 			>Temperature in &degF from {timeExtent[0].toLocaleDateString()} to {timeExtent[1].toLocaleDateString()}</text
 		>
 	{/if}
-	<g fill="white" stroke="currentColor" stroke-width="1">
+	<g fill="white" stroke="currentColor" stroke-width="1.5">
 		{#each data as d, i}
 			<circle cx={x(d.time)} cy={y(d.temp)} r="1" />
 		{/each}
