@@ -29,4 +29,4 @@
 	}
 </script>
 
-<g class="axis" bind:this={g} {transform} />
+<g class="axis" {width} bind:this={g} {transform} />
