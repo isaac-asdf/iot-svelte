@@ -16,15 +16,14 @@
 	let timeRange: { low: Date; high: Date } = { low: new Date(), high: new Date() };
 
 	let inputTimeChange = () => {
+		useTimeRange = false;
 		if (timeRangeInput.low && timeRangeInput.high) {
 			if (timeRangeInput.high > timeRangeInput.low) {
 				timeRange.low = timeRangeInput.low;
 				timeRange.high = timeRangeInput.high;
 				useTimeRange = true;
-				return;
 			}
 		}
-		useTimeRange = false;
 	};
 
 	let useTimeRange = false;
@@ -59,7 +58,6 @@
 		/>
 	</div>
 	{#if useTimeRange}
-		Using time Range
 		<TempGraph {timeRange} />
 	{:else}
 		<TempGraph />

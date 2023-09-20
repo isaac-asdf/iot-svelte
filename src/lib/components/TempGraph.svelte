@@ -44,9 +44,6 @@
 </script>
 
 <div>
-	{#if timeRange}
-		<text>Using manually selected time range...</text>
-	{/if}
 	<!-- <svg class="width:100% max-w-screen-sm" viewBox="0 0 {width + margin * 2} {height + margin * 2}"> -->
 	<svg viewBox="0 0 {width + margin * 2} {height + margin * 2}">
 		<path fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} />
