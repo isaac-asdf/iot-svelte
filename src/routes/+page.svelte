@@ -16,14 +16,14 @@
 	let timeRangeInput: { low: Date | null; high: Date | null } = { low: null, high: null };
 
 	let inputTimeChange = () => {
+		$timeFilter.useFilter = false;
 		if (timeRangeInput.low && timeRangeInput.high) {
 			if (timeRangeInput.high > timeRangeInput.low) {
-				const low = timeRangeInput.low;
-				const high = timeRangeInput.high;
+				const low = timeRangeInput!.low;
+				const high = timeRangeInput!.high;
 				$timeFilter = { low, high, useFilter: true };
 			}
 		}
-		$timeFilter.useFilter = false;
 	};
 
 	let showRelays = false;

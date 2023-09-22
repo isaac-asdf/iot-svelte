@@ -16,24 +16,26 @@
 	});
 
 	const data = derived([weatherStore, timeFilter], ([$weatherStore, $timeFilter]) => {
-		return $weatherStore.map((val) => {
-			const time = new Date(val.created_at! * 1000);
-			const celsius = parseFloat(val.content);
-			const temp = celsiusToF(celsius);
-			if ($timeFilter.useFilter) {
-				if (time > $timeFilter.low && time < $timeFilter.high) {
-					return {
-						temp,
-						time
-					};
-				}
-			} else {
+		return $weatherStore
+			.map((val) => {
+				const time = new Date(val.created_at! * 1000);
+				const celsius = parseFloat(val.content);
+				const temp = celsiusToF(celsius);
 				return {
 					temp,
 					time
 				};
-			}
-		});
+			})
+			.filter(({ time }) => {
+				const timeRangeFits =
+					time.getTime() > $timeFilter.low.getTime() && time.getTime() < $timeFilter.high.getTime();
+				if ($timeFilter.useFilter) {
+					console.log(time.getTime());
+					console.log($timeFilter.low);
+					console.log($timeFilter.high);
+				}
+				return !$timeFilter.useFilter || timeRangeFits;
+			});
 	});
 
 	function celsiusToF(celsius: number): number {
