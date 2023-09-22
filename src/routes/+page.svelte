@@ -1,6 +1,7 @@
 <script lang="ts">
 	import TempGraph from '$lib/components/TempGraph.svelte';
 	import { ndk } from '$lib/stores/ndk';
+	import { timeFilter } from '$lib/stores/time-filter';
 	import type { NDKFilter, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
 	import { RelayList } from '@nostr-dev-kit/ndk-svelte-components';
 
@@ -13,20 +14,17 @@
 	const events = $ndk.storeSubscribe(filter, { closeOnEose: false });
 
 	let timeRangeInput: { low: Date | null; high: Date | null } = { low: null, high: null };
-	let timeRange: { low: Date; high: Date } = { low: new Date(), high: new Date() };
 
 	let inputTimeChange = () => {
-		useTimeRange = false;
 		if (timeRangeInput.low && timeRangeInput.high) {
 			if (timeRangeInput.high > timeRangeInput.low) {
-				timeRange.low = timeRangeInput.low;
-				timeRange.high = timeRangeInput.high;
-				useTimeRange = true;
+				const low = timeRangeInput.low;
+				const high = timeRangeInput.high;
+				$timeFilter = { low, high, useFilter: true };
 			}
 		}
+		$timeFilter.useFilter = false;
 	};
-
-	let useTimeRange = false;
 
 	let showRelays = false;
 </script>
@@ -57,11 +55,7 @@
 			on:change={inputTimeChange}
 		/>
 	</div>
-	{#if useTimeRange}
-		<TempGraph {timeRange} />
-	{:else}
-		<TempGraph />
-	{/if}
+	<TempGraph />
 
 	{#if showRelays}
 		<button class="bg-slate-200 hover:bg-slate-300" on:click={() => (showRelays = !showRelays)}

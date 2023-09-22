@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { timeFilter } from '$lib/stores/time-filter';
 	import { weatherStore } from '$lib/stores/weather-store';
 	import Axis from './Axis.svelte';
 	// @ts-ignore
@@ -7,29 +8,32 @@
 	import { onDestroy } from 'svelte';
 	import { derived } from 'svelte/store';
 
+	type WeatherPoint = { temp: number; time: Date };
+
 	weatherStore.ref();
 	onDestroy(() => {
 		weatherStore.unref();
 	});
 
-	type WeatherPoint = { temp: number; time: Date };
-
-	const data = derived([weatherStore], ([$weatherStore]) => {
+	const data = derived([weatherStore, timeFilter], ([$weatherStore, $timeFilter]) => {
 		return $weatherStore.map((val) => {
 			const time = new Date(val.created_at! * 1000);
 			const celsius = parseFloat(val.content);
 			const temp = celsiusToF(celsius);
-			return {
-				temp,
-				time
-			};
+			if ($timeFilter.useFilter) {
+				if (time > $timeFilter.low && time < $timeFilter.high) {
+					return {
+						temp,
+						time
+					};
+				}
+			} else {
+				return {
+					temp,
+					time
+				};
+			}
 		});
-	});
-
-	onMount(() => {
-		if (timeRange) {
-			$data = $data.filter((event) => event.time > timeRange!.low && event.time < timeRange!.high);
-		}
 	});
 
 	function celsiusToF(celsius: number): number {
@@ -39,7 +43,6 @@
 	export let width = 640;
 	export let height = 400;
 	export let margin = 30;
-	export let timeRange: { low: Date; high: Date } | null = null;
 
 	$: timeExtent = d3.extent($data, (d: WeatherPoint) => d.time);
 	$: x = d3.scaleTime(timeExtent, [margin, width - margin]);
@@ -55,9 +58,6 @@
 </script>
 
 <div>
-	{#if timeRange != null}
-		<p>Manually filtering...</p>
-	{/if}
 	<!-- <svg class="width:100% max-w-screen-sm" viewBox="0 0 {width + margin * 2} {height + margin * 2}"> -->
 	<svg viewBox="0 0 {width + margin * 2} {height + margin * 2}">
 		<path fill="none" stroke="currentColor" stroke-width="1.5" d={line($data)} />
