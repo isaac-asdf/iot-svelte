@@ -19,8 +19,8 @@
 		$timeFilter.useFilter = false;
 		if (timeRangeInput.low && timeRangeInput.high) {
 			if (timeRangeInput.high > timeRangeInput.low) {
-				const low = timeRangeInput!.low;
-				const high = timeRangeInput!.high;
+				const low = new Date(timeRangeInput!.low);
+				const high = new Date(timeRangeInput!.high);
 				$timeFilter = { low, high, useFilter: true };
 			}
 		}

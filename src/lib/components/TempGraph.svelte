@@ -27,13 +27,8 @@
 				};
 			})
 			.filter(({ time }) => {
-				console.log(time.getTime());
-				console.log($timeFilter.low);
-				console.log($timeFilter.high);
 				const timeRangeFits =
 					time.getTime() > $timeFilter.low.getTime() && time.getTime() < $timeFilter.high.getTime();
-				if ($timeFilter.useFilter) {
-				}
 				return !$timeFilter.useFilter || timeRangeFits;
 			});
 	});
