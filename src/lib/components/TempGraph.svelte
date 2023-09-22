@@ -27,12 +27,12 @@
 				};
 			})
 			.filter(({ time }) => {
+				console.log(time.getTime());
+				console.log($timeFilter.low);
+				console.log($timeFilter.high);
 				const timeRangeFits =
 					time.getTime() > $timeFilter.low.getTime() && time.getTime() < $timeFilter.high.getTime();
 				if ($timeFilter.useFilter) {
-					console.log(time.getTime());
-					console.log($timeFilter.low);
-					console.log($timeFilter.high);
 				}
 				return !$timeFilter.useFilter || timeRangeFits;
 			});
