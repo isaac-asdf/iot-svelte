@@ -4,20 +4,31 @@
 	// @ts-ignore
 	import * as d3 from 'd3';
 	import { onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
+	import { derived } from 'svelte/store';
+
+	weatherStore.ref();
+	onDestroy(() => {
+		weatherStore.unref();
+	});
 
 	type WeatherPoint = { temp: number; time: Date };
 
-	let data: WeatherPoint[] = [];
-	$weatherStore.forEach((event) => {
-		const time = new Date(event.created_at! * 1000);
-		const celsius = parseFloat(event.content);
-		const temp = celsiusToF(celsius);
-		data.push({ temp, time });
+	const data = derived([weatherStore], ([$weatherStore]) => {
+		return $weatherStore.map((val) => {
+			const time = new Date(val.created_at! * 1000);
+			const celsius = parseFloat(val.content);
+			const temp = celsiusToF(celsius);
+			return {
+				temp,
+				time
+			};
+		});
 	});
 
 	onMount(() => {
-		if (timeRange != null) {
-			data.filter(({ time }) => time > timeRange!.low && time < timeRange!.high);
+		if (timeRange) {
+			$data = $data.filter((event) => event.time > timeRange!.low && event.time < timeRange!.high);
 		}
 	});
 
@@ -30,9 +41,9 @@
 	export let margin = 30;
 	export let timeRange: { low: Date; high: Date } | null = null;
 
-	$: timeExtent = d3.extent(data, (d: WeatherPoint) => d.time);
+	$: timeExtent = d3.extent($data, (d: WeatherPoint) => d.time);
 	$: x = d3.scaleTime(timeExtent, [margin, width - margin]);
-	$: y = d3.scaleLinear(d3.extent(data, (d: WeatherPoint) => d.temp).reverse(), [
+	$: y = d3.scaleLinear(d3.extent($data, (d: WeatherPoint) => d.temp).reverse(), [
 		margin * 2,
 		height - margin
 	]);
@@ -44,20 +55,25 @@
 </script>
 
 <div>
+	{#if timeRange != null}
+		<p>Manually filtering...</p>
+	{/if}
 	<!-- <svg class="width:100% max-w-screen-sm" viewBox="0 0 {width + margin * 2} {height + margin * 2}"> -->
 	<svg viewBox="0 0 {width + margin * 2} {height + margin * 2}">
-		<path fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} />
+		<path fill="none" stroke="currentColor" stroke-width="1.5" d={line($data)} />
 		<Axis {width} {height} {margin} scale={x} position="bottom" />
 		<Axis {width} {height} {margin} scale={y} position="left" />
 		<text y={height} x={width / 2}>Time</text>
-		{#if data.length > 0}
+		{#if $data.length > 0}
 			<text y={margin} x={margin / 2}
 				>Temperature in &degF from {timeExtent[0].toLocaleDateString()} to {timeExtent[1].toLocaleDateString()}</text
 			>
 		{/if}
 		<g fill="white" stroke="currentColor" stroke-width="1.5">
-			{#each data as d, i}
-				<circle cx={x(d.time)} cy={y(d.temp)} r="1" />
+			{#each $data as d}
+				{#if d}
+					<circle cx={x(d.time)} cy={y(d.temp)} r="1" />
+				{/if}
 			{/each}
 		</g>
 	</svg>
