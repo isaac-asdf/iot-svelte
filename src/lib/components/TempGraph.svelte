@@ -4,7 +4,6 @@
 	import Axis from './Axis.svelte';
 	// @ts-ignore
 	import * as d3 from 'd3';
-	import { onMount } from 'svelte';
 	import { onDestroy } from 'svelte';
 	import { derived } from 'svelte/store';
 
@@ -55,8 +54,8 @@
 </script>
 
 <div>
-	<!-- <svg class="width:100% max-w-screen-sm" viewBox="0 0 {width + margin * 2} {height + margin * 2}"> -->
-	<svg viewBox="0 0 {width + margin * 2} {height + margin * 2}">
+	<svg class="width:100% max-w-screen-sm" viewBox="0 0 {width + margin * 2} {height + margin * 2}">
+		<!-- <svg viewBox="0 0 {width + margin * 2} {height + margin * 2}"> -->
 		<path fill="none" stroke="currentColor" stroke-width="1.5" d={line($data)} />
 		<Axis {width} {height} {margin} scale={x} position="bottom" />
 		<Axis {width} {height} {margin} scale={y} position="left" />
