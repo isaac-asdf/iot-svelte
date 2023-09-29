@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import Button from '$lib/components/Button.svelte';
 	import TempGraph from '$lib/components/TempGraph.svelte';
 	import { ndk } from '$lib/stores/ndk';
 	import { timeFilter } from '$lib/stores/time-filter';
 	import type { NDKFilter, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
-	import { RelayList } from '@nostr-dev-kit/ndk-svelte-components';
 
 	// Create a filter
 	const filter: NDKFilter = {
@@ -25,16 +26,14 @@
 			}
 		}
 	};
-
-	let showRelays = false;
 </script>
 
 <svelte:head>
 	<title>Nostr Weather</title>
 </svelte:head>
 
-<div class="margin:40px">
-	<h1 class="font-bold text-2xl underline">Nostr Weather Report</h1>
+<div class="p-1">
+	<h1 class="p-1 font-bold text-2xl bg-gradient-to-r from-blue-400">Nostr Weather Report</h1>
 	<div class="border-b-2 hover:border-2 max-w-max">
 		<label for="minDate">Min. Date:</label>
 		<input
@@ -57,10 +56,5 @@
 	</div>
 	<TempGraph />
 
-	{#if showRelays}
-		<button class="bg-slate-200 hover:bg-slate-300" on:click={() => (showRelays = !showRelays)}
-			>Click for relays</button
-		>
-		<RelayList ndk={$ndk} />
-	{/if}
+	<Button onClick={() => goto('/config')} label="Configuration" />
 </div>
