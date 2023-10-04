@@ -76,7 +76,6 @@ declare module '$env/static/private' {
 	export const npm_package_scripts_preview: string;
 	export const npm_package_dependencies__nostr_dev_kit_ndk_svelte_components: string;
 	export const npm_lifecycle_event: string;
-	export const LOCAL_GIT_DIRECTORY: string;
 	export const LANG: string;
 	export const npm_package_name: string;
 	export const npm_config_resolution_mode: string;
@@ -94,9 +93,9 @@ declare module '$env/static/private' {
 	export const VSCODE_INJECTION: string;
 	export const npm_package_devDependencies_autoprefixer: string;
 	export const npm_package_devDependencies_svelte_check: string;
-	export const PYENV_SHELL: string;
-	export const SHLVL: string;
 	export const HOME: string;
+	export const SHLVL: string;
+	export const PYENV_SHELL: string;
 	export const npm_package_type: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const npm_package_dependencies_d3: string;
@@ -191,7 +190,6 @@ declare module '$env/dynamic/private' {
 		npm_package_scripts_preview: string;
 		npm_package_dependencies__nostr_dev_kit_ndk_svelte_components: string;
 		npm_lifecycle_event: string;
-		LOCAL_GIT_DIRECTORY: string;
 		LANG: string;
 		npm_package_name: string;
 		npm_config_resolution_mode: string;
@@ -209,9 +207,9 @@ declare module '$env/dynamic/private' {
 		VSCODE_INJECTION: string;
 		npm_package_devDependencies_autoprefixer: string;
 		npm_package_devDependencies_svelte_check: string;
-		PYENV_SHELL: string;
-		SHLVL: string;
 		HOME: string;
+		SHLVL: string;
+		PYENV_SHELL: string;
 		npm_package_type: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
 		npm_package_dependencies_d3: string;
